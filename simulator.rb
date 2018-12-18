@@ -5,7 +5,7 @@ require_relative "Fila.rb"
 #cliente = Cliente.new()
 #caja = Caja.new()
 #fila = Fila.new()
-
+filas = []
 def imprimir()
 end
 
@@ -13,9 +13,22 @@ def iterador()
 end
 
 def calcular_promedio()
+  return tiempo_total/numero_clientes
 end
 
-while true
+
+def asignar_filas(cajas, num)
+  if(num > 1)
+    num.times {|i| filas[i] = fila.new(cajas[i])}
+  elsif(num == 1)
+    filas[0] = cajas
+  end
+end
+
+tiempo_total = 0
+numero_clientes = 0
+
+
     #lipiar pantalla
     system "clear" or system "cls"
     puts "--- Simulador de filas ---",
@@ -33,6 +46,8 @@ while true
     num_cajas = arg[0].to_i
     tiempo = arg[1].to_i
     delta_tiempo = arg[2].to_i
+    cajas = Array.new(num_cajas)
+    num_cajas.times {|i| cajas[i] = Caja.new()}
 
     case comando
     when "s","S","9"
@@ -41,15 +56,18 @@ while true
     when "u"
         puts "selecciono fila unica"
         puts "cajas #{num_cajas} tiempo #{tiempo} delta #{delta_tiempo}"
-        gets.chomp
+        asignar_filas(cajas,num_cajas)
+
+
+
     when "m"
         puts "selecciono filas multiple"
-        gets.chomp
+        asignar_filas(cajas,"m")
 
     else
         puts "El comando '#{comando}' no es valido"
-        gets.chomp
+
     end
-end
+
 ## crear arreglos (cajas , filas , record clientes)
 ##ciclo iteraciones
