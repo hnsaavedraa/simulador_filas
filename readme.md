@@ -1,8 +1,6 @@
 # taller #6
 
-##integrantes
+## integrantes
 Nicolas Saavedra
 Jose Contreras
 Oscar Gomez
-
-
