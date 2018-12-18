@@ -4,7 +4,7 @@ class Cliente
 
 	def initialize()
 		aleatorio = Random.new
-		@nombre = aleatorio.rand(26)
+		@nombre = aleatorio.rand(97..122).chr
 		@tiempoCaja = aleatorio.rand(4..25)
 		@tiempoEspera = 0
 	end
