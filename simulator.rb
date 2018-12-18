@@ -59,11 +59,12 @@ numero_clientes = 0
         asignar_filas(cajas,num_cajas)
 
 
-
     when "m"
         puts "selecciono filas multiple"
         asignar_filas(cajas,"m")
-
+        for i in 0...tiempo
+          
+        end
     else
         puts "El comando '#{comando}' no es valido"
 
