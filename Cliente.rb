@@ -1,6 +1,6 @@
 class Cliente
 
-	attr_accessor :tiempoEspera ,:nombre, :tiempoCaja 
+	attr_accessor :tiempoEspera ,:nombre, :tiempoCaja
 
 	def initialize()
 		aleatorio = Random.new
@@ -9,7 +9,7 @@ class Cliente
 		@tiempoEspera = 0
 	end
 
-	def diminuir_tiempo_caja()
+	def disminuir_tiempo_caja()
 		@tiempoCaja -= 1
 	end
 
