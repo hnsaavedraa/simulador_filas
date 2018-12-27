@@ -1,10 +1,8 @@
 require_relative "Cliente.rb"
 require_relative "Caja.rb"
 require_relative "Fila.rb"
+require_relative "Pintar.rb"
 
-
-def imprimir()
-end
 
 def calcular_promedio()
   return tiempo_total/numero_clientes
@@ -19,18 +17,7 @@ def asignar_filas(cajas, num, filas)
   end
 end
 
-def pintar(cajas, num_caja, filas)
-  for x in 0...num_caja
-    if(cajas[x].cliente_caja != nil )
-      clien = cajas[x].cliente_caja
-      puts " cliente #{clien.nombre} de la caja #{x+1} le faltan #{clien.tiempoCaja} minutos "
-    end
-  end
-  aux = filas[0].cola_clientes.clone
-  aux.size.times do |x|
-    puts "#{aux[x].nombre} lleva esperando #{aux[x].tiempoEspera} "
-  end
-end
+
 
 tiempo_total = 0
 numero_clientes = 0
@@ -94,7 +81,9 @@ case comando
       ## acaba el recorrido de cajas
       ## Registramos para cada persona en la fila el paso del tiempo (Tiempo de espera)
       filas[0].aumentar_espera_fila
-      pintar(cajas, num_cajas, filas)## Metodo de pintado provisional
+      pintar = Pintar.new(cajas,filas)
+      pintar.visualizar()  ## Metodo de pintado
+      sleep(delta_tiempo) ## aplicamos delta de tiempo
     end
     ## Por ultimo calculamos el promedio del tiempo de espera
     tiempo_total += filas[0].calcular_espera()
