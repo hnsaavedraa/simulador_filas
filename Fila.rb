@@ -7,10 +7,12 @@ class Fila
     @caja_asociada = caja_asociada
   end
 
-  def pasar_cliente_unicafila(caja)
+  def pasar_cliente(caja)
     cliente_a_caja = cola_clientes.delete_at(0)
     caja.pasar(cliente_a_caja)
   end
+
+
 
   def agregar_cliente(cliente_nuevo)
     cola_clientes.push(cliente_nuevo)
