@@ -4,8 +4,9 @@ require_relative "Fila.rb"
 require_relative "Pintar.rb"
 
 
-def calcular_promedio()
-  return tiempo_total/numero_clientes
+def calcular_promedio(tiempo_total, numero_clientes)
+  promedio = (tiempo_total* 1.0)/numero_clientes
+  return promedio.round(2)
 end
 
 
@@ -57,17 +58,19 @@ case comando
         num_agregar.times {|n| filas[0].agregar_cliente( Cliente.new())}
         numero_clientes += num_agregar
       end
+
+
       ## En cada iteracion vamos caja por caja revisando si esta disponible
       ## O si el cliente en caja esta proximo a terminar su compra
       for j in 0...num_cajas
         if (cajas[j].cliente_caja == nil)
           if ( !filas[0].vacia )
-            filas[0].pasar_cliente_unicafila(cajas[j])
+            filas[0].pasar_cliente(cajas[j])
             tiempo_total += cajas[j].cliente_caja.tiempoEspera
           end
         elsif (cajas[j].cliente_caja.tiempoCaja == 0)
           if(!filas[0].vacia)
-            filas[0].pasar_cliente_unicafila(cajas[j])
+            filas[0].pasar_cliente(cajas[j])
             tiempo_total += cajas[j].cliente_caja.tiempoEspera
           else
             cajas[j].cliente_caja = nil
@@ -87,12 +90,55 @@ case comando
     end
     ## Por ultimo calculamos el promedio del tiempo de espera
     tiempo_total += filas[0].calcular_espera()
-    puts "promedio #{tiempo_total/numero_clientes}"
-    # puts "#{numero_clientes}  total clientes"
-    # puts "#{tiempo_total} tiempo espera total"
+    puts "promedio #{calcular_promedio(tiempo_total, numero_clientes)}"
 
   when "m"
     puts "selecciono filas multiple"
+    largo_filas = Array.new(num_cajas) {0}
+    for i in 1...(tiempo)
+
+        if (i == 1 || i%3 == 0)
+          num_agregar = Random.new.rand(0..5)
+          num_agregar.times do
+            pos = largo_filas.index(largo_filas.min)
+            filas[pos].agregar_cliente( Cliente.new())
+            largo_filas[pos] += 1
+          end
+          numero_clientes += num_agregar
+        end
+
+        ## recorremos cajas para pasar clientes de  las filas
+        for j in 0...num_cajas
+
+          if (cajas[j].cliente_caja == nil)
+            if ( !filas[j].vacia )
+              filas[j].pasar_cliente(cajas[j])
+              tiempo_total += cajas[j].cliente_caja.tiempoEspera
+            end
+          elsif (cajas[j].cliente_caja.tiempoCaja == 0)
+            largo_filas[j] -= 1
+            if ( !filas[j].vacia )
+              filas[j].pasar_cliente(cajas[j])
+              tiempo_total += cajas[j].cliente_caja.tiempoEspera
+            else
+              cajas[j].cliente_caja = nil
+            end
+          end
+          ## Registramos el paso del tiempo para los clientes en cada caja (Tiempo en caja)
+          if(cajas[j].cliente_caja != nil)
+            cajas[j].cliente_caja.disminuir_tiempo_caja()
+          end
+        end
+        num_cajas.times {|m| filas[m].aumentar_espera_fila }
+        ## apartir de aca el proceso es el mismo, crear metodos
+        pintar = Pintar.new(cajas,filas)
+        pintar.visualizar()  ## Metodo de pintado
+        sleep(delta_tiempo) ## aplicamos delta de tiempo
+    end
+    ## Por ultimo calculamos el promedio del tiempo de espera
+    tiempo_total += filas[0].calcular_espera()
+
+    puts "promedio #{calcular_promedio(tiempo_total, numero_clientes)}"
 
   else
     puts "El comando '#{comando}' no es valido"
