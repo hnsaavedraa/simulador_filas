@@ -92,7 +92,6 @@ for i in 1...(tiempo)
   for j in 0...num_cajas
     tiempo_total += validacion_cajas(comando, filas, cajas, j, largo_filas)
   end
-  ##
   filas[0].aumentar_espera_fila if comando == "u"
   num_cajas.times {|m| filas[m].aumentar_espera_fila } if comando == "m"
   pintar = Pintar.new(cajas,filas)
