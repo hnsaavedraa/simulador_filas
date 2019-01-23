@@ -1,10 +1,9 @@
 require_relative "Caja"
 
 class Fila
-  attr_accessor :cola_clientes, :caja_asociada
-  def initialize(caja_asociada)
+  attr_accessor :cola_clientes
+  def initialize()
     @cola_clientes = Array.new()
-    @caja_asociada = caja_asociada
   end
 
   def pasar_cliente(caja)
