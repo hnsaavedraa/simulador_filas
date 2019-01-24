@@ -7,10 +7,8 @@ class Cliente
 		@nombre = aleatorio.rand(97..122).chr
 		@tiempoCaja = aleatorio.rand(4..25)
 		@tiempoEspera = 0
-
-		if @nombre == "c" 
-			@nombre = "s"
-		end
+		
+		@nombre = "s" if @nombre == "c" 
 	end
 
 	def disminuir_tiempo_caja()
