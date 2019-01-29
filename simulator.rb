@@ -12,23 +12,24 @@ def calcular_promedio(tiempo_total, numero_clientes)
   return promedio.round(2)
 end
 
-def calcular_espera_fila (caso, filas, num_cajas)
+def calcular_espera_fila (multiples_filas, filas, num_cajas)
 total = 0
-  if (caso == "u")
+  if (!multiples_filas)
     total = filas[0].calcular_espera()
-  elsif(caso == "m")
+  elsif(multiples_filas)
     num_cajas.times {|n| total += filas[n].calcular_espera()}
   end
 return total
 end
 
 
-def generar_clientes (caso, filas, largo_filas = 0  )
+def generar_clientes (multiples_filas, filas, largo_filas = 0  )
     num_agregar = Random.new.rand(0..5)
-  case caso
-    when "u"
+
+    if  !multiples_filas
       num_agregar.times {|n| filas[0].agregar_cliente( Cliente.new())}
-    when "m"
+    end
+    if multiples_filas
       num_agregar.times {|n| pos_min = largo_filas.index(largo_filas.min)
        filas[pos_min].agregar_cliente( Cliente.new())
        largo_filas[pos_min] += 1}
@@ -36,19 +37,19 @@ def generar_clientes (caso, filas, largo_filas = 0  )
   return num_agregar
 end
 
-def validacion_cajas (caso, filas, cajas, j, largo_filas)
+def validacion_cajas (multiples_filas, filas, cajas, j, largo_filas)
   x = 0
-  x = j if caso == "m"
+  x = j if multiples_filas
   ## corresponde al tiempo que esperaron los clientes que ya acabaron su compra
   tiempo_cliente_registrado = 0
   if (cajas[j].cliente_caja == nil)
-    if ( !filas[x].vacia )
+    if ( !filas[x].cola_clientes.size() ==0 )
       filas[x].pasar_cliente(cajas[j])
       tiempo_cliente_registrado += cajas[j].cliente_caja.tiempoEspera
     end
   elsif (cajas[j].cliente_caja.tiempoCaja == 0)
-    largo_filas[j] -= 1 if caso == "m"
-    if ( !filas[x].vacia )
+    largo_filas[j] -= 1 if multiples_filas
+    if ( !filas[x].cola_clientes.size() ==0 )
       filas[x].pasar_cliente(cajas[j])
       tiempo_cliente_registrado += cajas[j].cliente_caja.tiempoEspera
     else
@@ -73,32 +74,47 @@ puts "--- Simulador de filas ---",
 "  delta de tiempo deseado para cada iteración",
 "          ej: u 5 10 1"
 
+=begin
 comandoAux = gets.chomp
 comando, *arg = comandoAux.downcase.split /\s/
 num_cajas = arg[0].to_i
 cajas = Array.new(num_cajas)
 tiempo = arg[1].to_i
 delta_tiempo = arg[2].to_i
+=end
+
+comandoAux = gets.chomp
+arg=Array.new()
+arg = comandoAux.downcase.split(" ")
+comando = arg[0]
+num_cajas = arg[1].to_i
+cajas = Array.new(num_cajas)
+tiempo = arg[2].to_i
+delta_tiempo = arg[3].to_i
+
+multiples_filas=false
+if comando == "m"
+  multiples_filas=true
+end
 
 num_cajas.times {|i| cajas[i] = Caja.new()
 filas[i] = Fila.new()}
 largo_filas = 0
-largo_filas = Array.new(num_cajas) {0} if comando == "m"
+largo_filas = Array.new(num_cajas) {0} if multiples_filas
 
 for i in 1...(tiempo)
   if (i == 1 || i%3 == 0)
-    numero_clientes += generar_clientes(comando,filas,largo_filas )
+    numero_clientes += generar_clientes(multiples_filas,filas,largo_filas )
   end
   for j in 0...num_cajas
-    tiempo_total += validacion_cajas(comando, filas, cajas, j, largo_filas)
+    tiempo_total += validacion_cajas(multiples_filas, filas, cajas, j, largo_filas)
   end
-  ##
-  filas[0].aumentar_espera_fila if comando == "u"
-  num_cajas.times {|m| filas[m].aumentar_espera_fila } if comando == "m"
+  filas[0].aumentar_espera_fila if !multiples_filas
+  num_cajas.times {|m| filas[m].aumentar_espera_fila } if multiples_filas
   pintar = Pintar.new(cajas,filas)
   pintar.visualizar()
   sleep(delta_tiempo)
 end
 
-tiempo_total += calcular_espera_fila(comando, filas, num_cajas)
+tiempo_total += calcular_espera_fila(multiples_filas, filas, num_cajas)
 puts "promedio #{calcular_promedio tiempo_total, numero_clientes }"
